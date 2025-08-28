@@ -1,1 +1,0 @@
-"// entrypoint of the app" 

@@ -1,6 +1,7 @@
 import { prisma } from "../../lib/prisma";
-import { UserDTO } from "./user.model";
+import { UserDTO, UserModel } from "./user.model";
 import bcrypt from "bcryptjs";
+import { User } from "@prisma/client";
 
 class UserService {
   async createUser(data: {
@@ -26,7 +27,8 @@ class UserService {
 
   async getAllUsers(): Promise<UserDTO[]> {
     const users = await prisma.user.findMany();
-    return users.map((user) => ({
+
+    return users.map((user: User) => ({
       id: user.id,
       name: user.name,
       email: user.email,

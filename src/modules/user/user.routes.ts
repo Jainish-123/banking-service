@@ -2,6 +2,11 @@ import { Router } from "express";
 import { validate } from "../../middlewares/validate";
 import { createUserSchema, getUserByIdSchema } from "./user.validate";
 import userController from "./user.controller";
+import {
+  requireAuth,
+  requireRole,
+  requireSelfOrAdmin,
+} from "../../middlewares/auth";
 
 const router = Router();
 
@@ -14,55 +19,12 @@ const router = Router();
 
 /**
  * @swagger
- * /api/users/create-user:
- *   post:
- *     summary: Create a new user
- *     tags: [Users]
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required:
- *               - name
- *               - email
- *               - password
- *             properties:
- *               name:
- *                 type: string
- *                 example: John Doe
- *               email:
- *                 type: string
- *                 example: john@example.com
- *               password:
- *                 type: string
- *                 example: abc123#
- *     responses:
- *       201:
- *         description: User created successfully
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/UserDTO'
- *       400:
- *         description: Invalid input
- *       500:
- *         description: Internal server error
- */
-
-router.post(
-  "/create-user",
-  validate(createUserSchema),
-  userController.createUser
-);
-
-/**
- * @swagger
  * /api/users/get-all-users:
  *   get:
  *     summary: Retrieve all users
  *     tags: [Users]
+ *     security:
+ *        - bearerAuth: []
  *     responses:
  *       200:
  *         description: List of all users
@@ -76,7 +38,12 @@ router.post(
  *         description: Internal server error
  */
 
-router.get("/get-all-users", userController.getAllUsers);
+router.get(
+  "/get-all-users",
+  requireAuth,
+  requireRole("ADMIN"),
+  userController.getAllUsers
+);
 
 /**
  * @swagger
@@ -84,6 +51,8 @@ router.get("/get-all-users", userController.getAllUsers);
  *   get:
  *     summary: Get user by ID
  *     tags: [Users]
+ *     security:
+ *        - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -107,6 +76,8 @@ router.get("/get-all-users", userController.getAllUsers);
 router.get(
   "/get-user/:id",
   validate(getUserByIdSchema),
+  requireAuth,
+  requireSelfOrAdmin("id"),
   userController.getUserById
 );
 

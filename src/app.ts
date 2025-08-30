@@ -2,6 +2,7 @@ import express, { Application, Request, Response } from "express";
 import helmet from "helmet";
 import cors from "cors";
 import userRoutes from "./modules/user/user.routes";
+import authRoutes from "./modules/auth/auth.routes";
 const swaggerUi = require("swagger-ui-express");
 import swaggerSpec from "./config/swagger";
 import { errorHandler } from "./middlewares/errorHandler";
@@ -12,6 +13,7 @@ app.use(cors());
 app.use(express.json());
 
 app.use("/api/users", userRoutes);
+app.use("/api/auth", authRoutes);
 
 app.get("/health", (req: Request, res: Response) => {
   res

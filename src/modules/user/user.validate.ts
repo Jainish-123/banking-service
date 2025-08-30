@@ -18,7 +18,7 @@ export const getUserByIdSchema = z.object({
       .string()
       .transform((val) => parseInt(val, 10))
       .refine((val) => !isNaN(val), {
-        message: "id must be a valid number",
+        message: "Id must be a valid number",
       }),
   }),
 });

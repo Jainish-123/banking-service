@@ -12,8 +12,7 @@
     "format": "prettier --check .",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
-    "db:seed": "ts-node prisma/seed.ts",
-    "prepare": "husky install"
+    "db:seed": "ts-node prisma/seed.ts"
   },
   "repository": {
     "type": "git",

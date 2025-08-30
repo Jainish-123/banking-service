@@ -67,3 +67,17 @@ export const requireSelfOrAdmin =
     }
     return next(new AppError("Forbidden", 403));
   };
+
+export const matchUserId = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  if (!req.user) {
+    return next(new AppError("Unauthorized", 401));
+  }
+  if (req.user.id !== req.body.userId) {
+    return next(new AppError("Forbidden", 403));
+  }
+  next();
+};

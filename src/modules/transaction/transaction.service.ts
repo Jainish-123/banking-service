@@ -2,7 +2,10 @@ import { Decimal } from "@prisma/client/runtime/library";
 import { prisma } from "../../lib/prisma";
 import { AppError } from "../../middlewares/errorHandler";
 import { TransactionResponse } from "./transaction.model";
-import { TransactionInput } from "./transaction.validate";
+import {
+  TransactionInput,
+  GetTransactionByIdInput,
+} from "./transaction.validate";
 import { TransactionStatus, TransactionType } from "@prisma/client";
 import { Request } from "express";
 
@@ -109,6 +112,43 @@ class TransactionService {
         },
       }),
     ]);
+
+    return {
+      id: transaction.id,
+      type: transaction.type,
+      amount: Number(transaction.amount),
+      status: transaction.status,
+      desciption: transaction.description ?? undefined,
+      balanceAfter: Number(transaction.balanceAfter),
+      accountId: transaction.accountId,
+      accountNumber: account.accountNumber,
+      userId: user.id,
+    };
+  }
+
+  async getTransactionById(
+    data: GetTransactionByIdInput,
+    user: Request["user"]
+  ): Promise<TransactionResponse> {
+    const transaction = await prisma.transaction.findUnique({
+      where: { id: data.id },
+    });
+
+    if (!transaction) {
+      throw new AppError("Transaction not found", 404);
+    }
+
+    if (transaction.userId !== user?.id && user?.role !== "ADMIN") {
+      throw new AppError("Forbidden", 403);
+    }
+
+    const account = await prisma.account.findUnique({
+      where: { id: transaction.accountId },
+    });
+
+    if (!account) {
+      throw new AppError("Account not exist for this transaction", 400);
+    }
 
     return {
       id: transaction.id,

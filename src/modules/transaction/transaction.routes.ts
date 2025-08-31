@@ -1,6 +1,11 @@
 import { Router } from "express";
 import { requireAuth } from "../../middlewares/auth";
 import transactionController from "./transaction.controller";
+import {
+  getTransactionByIdSchema,
+  transactionSchema,
+} from "./transaction.validate";
+import { validate } from "../../middlewares/validate";
 
 /**
  * @swagger
@@ -33,7 +38,12 @@ const router = Router();
  *       500:
  *         description: Internal server error
  */
-router.post("/deposit", requireAuth, transactionController.deposit);
+router.post(
+  "/deposit",
+  validate(transactionSchema),
+  requireAuth,
+  transactionController.deposit
+);
 
 /**
  * @swagger
@@ -59,7 +69,50 @@ router.post("/deposit", requireAuth, transactionController.deposit);
  *       500:
  *         description: Internal server error
  */
-router.post("/withdraw", requireAuth, transactionController.withdraw);
+router.post(
+  "/withdraw",
+  validate(transactionSchema),
+  requireAuth,
+  transactionController.withdraw
+);
+
+/**
+ * @swagger
+ * /api/transaction/get-transaction/{id}:
+ *   get:
+ *     summary: Get transaction by user id
+ *     tags: [Transaction]
+ *     security:
+ *        - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *           example: 1
+ *         description: Transaction Id
+ *     responses:
+ *       200:
+ *         description: Transaction found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/TransactionDTO'
+ *       404:
+ *         description: Transaction not found
+ *       403:
+ *         description: Forbidden
+ *       500:
+ *         description: Internal server error
+ */
+
+router.get(
+  "/get-transaction/:id",
+  validate(getTransactionByIdSchema),
+  requireAuth,
+  transactionController.getTransactionById
+);
 
 export default router;
 

@@ -3,9 +3,11 @@ import { CreateAccountResponse } from "./account.model";
 import {
   CreateAccountInput,
   GetAccountByNumberInput,
+  GetAccountByUserIdInput,
 } from "./account.validate";
 import { prisma } from "../../lib/prisma";
 import { AppError } from "../../middlewares/errorHandler";
+import { Account } from "@prisma/client";
 
 class AccountService {
   async createAccount(
@@ -63,6 +65,27 @@ class AccountService {
       balance: Number(account.balance),
       isPrimary: account.isPrimary,
     };
+  }
+
+  async getAccountsByUserId(
+    data: GetAccountByUserIdInput
+  ): Promise<CreateAccountResponse[]> {
+    const accounts = await prisma.account.findMany({
+      where: { userId: data.id },
+    });
+
+    if (!accounts || accounts.length == 0) {
+      throw new AppError("Account not found", 404);
+    }
+
+    return accounts.map((account: Account) => ({
+      accountId: account.id,
+      userId: account.userId,
+      accountNumber: account.accountNumber,
+      accountType: account.accountType,
+      balance: Number(account.balance),
+      isPrimary: account.isPrimary,
+    }));
   }
 }
 

@@ -3,8 +3,13 @@ import { validate } from "../../middlewares/validate";
 import {
   createAccountSchema,
   getAccountByNumberSchema,
+  getAccountsByUserIdSchema,
 } from "./account.validate";
-import { matchUserId, requireAuth } from "../../middlewares/auth";
+import {
+  matchUserId,
+  requireAuth,
+  requireSelfOrAdmin,
+} from "../../middlewares/auth";
 import accountController from "./account.controller";
 
 /**
@@ -79,6 +84,43 @@ router.get(
   validate(getAccountByNumberSchema),
   requireAuth,
   accountController.getAccountDetailsByNumber
+);
+
+/**
+ * @swagger
+ * /api/account/get-account-by-user/{id}:
+ *   get:
+ *     summary: Get account by user id
+ *     tags: [Account]
+ *     security:
+ *        - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *           example: 1
+ *         description: User Id
+ *     responses:
+ *       200:
+ *         description: Account/s found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/AccountDTO'
+ *       404:
+ *         description: Account not found
+ *       500:
+ *         description: Internal server error
+ */
+
+router.get(
+  "/get-account-by-user/:id",
+  validate(getAccountsByUserIdSchema),
+  requireAuth,
+  requireSelfOrAdmin("id"),
+  accountController.getAccountsByUserId
 );
 
 export default router;

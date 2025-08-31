@@ -1,6 +1,9 @@
 import { Request, Response, NextFunction } from "express";
 import accountService from "./account.service";
-import { getAccountByNumberSchema } from "./account.validate";
+import {
+  getAccountByNumberSchema,
+  getAccountsByUserIdSchema,
+} from "./account.validate";
 
 class AccountController {
   async createAccount(req: Request, res: Response, next: NextFunction) {
@@ -28,6 +31,21 @@ class AccountController {
       );
       if (account) {
         res.status(200).json(account);
+      }
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async getAccountsByUserId(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { id } = getAccountsByUserIdSchema.parse({
+        params: req.params,
+      }).params;
+
+      const accounts = await accountService.getAccountsByUserId({ id });
+      if (accounts) {
+        res.status(200).json(accounts);
       }
     } catch (error) {
       next(error);

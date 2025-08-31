@@ -4,12 +4,17 @@ import {
   getAccountByNumberSchema,
   getAccountsByUserIdSchema,
 } from "./account.validate";
+import { AppError } from "../../middlewares/errorHandler";
 
 class AccountController {
   async createAccount(req: Request, res: Response, next: NextFunction) {
     try {
       const account = await accountService.createAccount(req.body);
-      return res.status(201).json(account);
+      if (!account) {
+        return next(new AppError("Account could not be created", 400));
+      }
+
+      res.status(201).json(account);
     } catch (error) {
       next(error);
     }

@@ -37,6 +37,12 @@ enum TransactionType {
   WITHDRAW
 }
 
+enum TransactionStatus {
+  PENDING
+  SUCCESS
+  FAILED
+}
+
 model User {
   id        Int      @id @default(autoincrement())
   name      String
@@ -47,6 +53,7 @@ model User {
   updatedAt DateTime @updatedAt
 
   accounts  Account[]
+  transactions  Transaction[]
 }
 
 model Account {
@@ -66,10 +73,15 @@ model Account {
 }
 
 model Transaction {
-  id          Int       @id @default(autoincrement())
-  type        TransactionType
-  amount      Decimal
-  accountId   Int
-  account     Account   @relation(fields: [accountId], references: [id])
-  createdAt   DateTime  @default(now())
+  id            Int       @id @default(autoincrement())
+  type          TransactionType
+  amount        Decimal
+  status        TransactionStatus   @default(PENDING)
+  description   String?
+  balanceAfter  Decimal
+  accountId     Int
+  account       Account   @relation(fields: [accountId], references: [id])
+  userId        Int
+  user          User      @relation(fields: [userId], references: [id])
+  createdAt     DateTime  @default(now())
 }

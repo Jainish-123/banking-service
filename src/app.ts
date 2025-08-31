@@ -4,6 +4,7 @@ import cors from "cors";
 import userRoutes from "./modules/user/user.routes";
 import authRoutes from "./modules/auth/auth.routes";
 import accountRoutes from "./modules/account/account.routes";
+import transactionRoutes from "./modules/transaction/transaction.routes";
 const swaggerUi = require("swagger-ui-express");
 import swaggerSpec from "./config/swagger";
 import { errorHandler } from "./middlewares/errorHandler";
@@ -16,6 +17,7 @@ app.use(express.json());
 app.use("/api/users", userRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/account", accountRoutes);
+app.use("/api/transaction", transactionRoutes);
 
 app.get("/health", (req: Request, res: Response) => {
   res

@@ -27,6 +27,8 @@ const router = Router();
  *   post:
  *     summary: create account
  *     tags: [Account]
+ *     security:
+ *        - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:

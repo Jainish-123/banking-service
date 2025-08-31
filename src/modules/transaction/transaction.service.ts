@@ -5,8 +5,13 @@ import { TransactionResponse } from "./transaction.model";
 import {
   TransactionInput,
   GetTransactionByIdInput,
+  GetTransactionsByAccountIdInput,
 } from "./transaction.validate";
-import { TransactionStatus, TransactionType } from "@prisma/client";
+import {
+  Transaction,
+  TransactionStatus,
+  TransactionType,
+} from "@prisma/client";
 import { Request } from "express";
 
 class TransactionService {
@@ -50,7 +55,7 @@ class TransactionService {
       type: transaction.type,
       amount: Number(transaction.amount),
       status: transaction.status,
-      desciption: transaction.description ?? undefined,
+      description: transaction.description ?? undefined,
       balanceAfter: Number(transaction.balanceAfter),
       accountId: transaction.accountId,
       accountNumber: account.accountNumber,
@@ -118,7 +123,7 @@ class TransactionService {
       type: transaction.type,
       amount: Number(transaction.amount),
       status: transaction.status,
-      desciption: transaction.description ?? undefined,
+      description: transaction.description ?? undefined,
       balanceAfter: Number(transaction.balanceAfter),
       accountId: transaction.accountId,
       accountNumber: account.accountNumber,
@@ -130,6 +135,10 @@ class TransactionService {
     data: GetTransactionByIdInput,
     user: Request["user"]
   ): Promise<TransactionResponse> {
+    if (!user) {
+      throw new AppError("Unauthorized", 401);
+    }
+
     const transaction = await prisma.transaction.findUnique({
       where: { id: data.id },
     });
@@ -155,12 +164,52 @@ class TransactionService {
       type: transaction.type,
       amount: Number(transaction.amount),
       status: transaction.status,
-      desciption: transaction.description ?? undefined,
+      description: transaction.description ?? undefined,
       balanceAfter: Number(transaction.balanceAfter),
       accountId: transaction.accountId,
       accountNumber: account.accountNumber,
       userId: user.id,
     };
+  }
+
+  async getTransactionsByAccountId(
+    data: GetTransactionsByAccountIdInput,
+    user: Request["user"]
+  ): Promise<TransactionResponse[]> {
+    if (!user) {
+      throw new AppError("Unauthorized", 401);
+    }
+
+    const account = await prisma.account.findUnique({
+      where: { id: data.accountId },
+    });
+
+    if (!account) {
+      throw new AppError("Account not exist for this transaction", 400);
+    }
+
+    const transactions = await prisma.transaction.findMany({
+      where: {
+        accountId: data.accountId,
+        ...(user.role !== "ADMIN" && { userId: user.id }),
+      },
+    });
+
+    if (!transactions || transactions.length == 0) {
+      throw new AppError("Transactions not exists for this account/user", 404);
+    }
+
+    return transactions.map((transaction: Transaction) => ({
+      id: transaction.id,
+      type: transaction.type,
+      amount: Number(transaction.amount),
+      status: transaction.status,
+      description: transaction.description ?? undefined,
+      balanceAfter: Number(transaction.balanceAfter),
+      accountId: transaction.accountId,
+      accountNumber: account.accountNumber,
+      userId: user.id,
+    }));
   }
 }
 

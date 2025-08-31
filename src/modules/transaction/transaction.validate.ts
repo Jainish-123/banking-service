@@ -19,7 +19,21 @@ export const getTransactionByIdSchema = z.object({
   }),
 });
 
+export const getTransactionsByAccountIdSchema = z.object({
+  params: z.object({
+    accountId: z
+      .string()
+      .transform((val) => parseInt(val, 10))
+      .refine((val) => !isNaN(val), {
+        message: "Id must be a valid number",
+      }),
+  }),
+});
+
 export type TransactionInput = z.infer<typeof transactionSchema>["body"];
 export type GetTransactionByIdInput = z.infer<
   typeof getTransactionByIdSchema
+>["params"];
+export type GetTransactionsByAccountIdInput = z.infer<
+  typeof getTransactionsByAccountIdSchema
 >["params"];

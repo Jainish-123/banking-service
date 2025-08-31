@@ -10,7 +10,7 @@ export interface TransactionResponse {
   type: TransactionType;
   amount: number;
   status: TransactionStatus;
-  desciption?: string;
+  description?: string;
   balanceAfter: number;
   accountId: number;
   accountNumber: string;

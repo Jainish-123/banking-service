@@ -3,6 +3,7 @@ import { requireAuth } from "../../middlewares/auth";
 import transactionController from "./transaction.controller";
 import {
   getTransactionByIdSchema,
+  getTransactionsByAccountIdSchema,
   transactionSchema,
 } from "./transaction.validate";
 import { validate } from "../../middlewares/validate";
@@ -112,6 +113,44 @@ router.get(
   validate(getTransactionByIdSchema),
   requireAuth,
   transactionController.getTransactionById
+);
+
+/**
+ * @swagger
+ * /api/transaction/get-transactions/{accountId}:
+ *   get:
+ *     summary: Get transactions by account id
+ *     tags: [Transaction]
+ *     security:
+ *        - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: accountId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *           example: 1
+ *         description: Account Id
+ *     responses:
+ *       200:
+ *         description: Transactions found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/TransactionDTO'
+ *       404:
+ *         description: Transactions not found
+ *       403:
+ *         description: Forbidden
+ *       500:
+ *         description: Internal server error
+ */
+
+router.get(
+  "/get-transactions/:accountId",
+  validate(getTransactionsByAccountIdSchema),
+  requireAuth,
+  transactionController.getTransactionsByAccountId
 );
 
 export default router;

@@ -1,7 +1,10 @@
 import { Request, Response, NextFunction } from "express";
 import transactionService from "./transaction.service";
 import { AppError } from "../../middlewares/errorHandler";
-import { getTransactionByIdSchema } from "./transaction.validate";
+import {
+  getTransactionByIdSchema,
+  getTransactionsByAccountIdSchema,
+} from "./transaction.validate";
 
 class TransactionController {
   async deposit(req: Request, res: Response, next: NextFunction) {
@@ -42,6 +45,27 @@ class TransactionController {
       );
 
       res.status(200).json(transaction);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async getTransactionsByAccountId(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const { accountId } = getTransactionsByAccountIdSchema.parse({
+        params: req.params,
+      }).params;
+
+      const transactions = await transactionService.getTransactionsByAccountId(
+        { accountId },
+        req.user
+      );
+
+      res.status(200).json(transactions);
     } catch (error) {
       next(error);
     }

@@ -1,6 +1,9 @@
 import { Router } from "express";
 import { validate } from "../../middlewares/validate";
-import { createAccountSchema } from "./account.validate";
+import {
+  createAccountSchema,
+  getAccountByNumberSchema,
+} from "./account.validate";
 import { matchUserId, requireAuth } from "../../middlewares/auth";
 import accountController from "./account.controller";
 
@@ -24,7 +27,7 @@ const router = Router();
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/CreateAccountDTO'
+ *             $ref: '#/components/schemas/AccountDTO'
  *     responses:
  *       201:
  *         description: Account created
@@ -42,13 +45,49 @@ router.post(
   accountController.createAccount
 );
 
+/**
+ * @swagger
+ * /api/account/get-account/{accountNumber}:
+ *   get:
+ *     summary: Get account by account number
+ *     tags: [Account]
+ *     security:
+ *        - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: accountNumber
+ *         required: true
+ *         schema:
+ *           type: string
+ *           example: ACC-X-1756595377248
+ *         description: Account number
+ *     responses:
+ *       200:
+ *         description: Account found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/AccountDTO'
+ *       404:
+ *         description: Account not found
+ *       500:
+ *         description: Internal server error
+ */
+
+router.get(
+  "/get-account/:accountNumber",
+  validate(getAccountByNumberSchema),
+  requireAuth,
+  accountController.getAccountDetailsByNumber
+);
+
 export default router;
 
 /**
  * @swagger
  * components:
  *   schemas:
- *     CreateAccountDTO:
+ *     AccountDTO:
  *       type: object
  *       properties:
  *         userId:

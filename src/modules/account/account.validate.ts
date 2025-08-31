@@ -8,4 +8,13 @@ export const createAccountSchema = z.object({
   }),
 });
 
+export const getAccountByNumberSchema = z.object({
+  params: z.object({
+    accountNumber: z.string(),
+  }),
+});
+
 export type CreateAccountInput = z.infer<typeof createAccountSchema>["body"];
+export type GetAccountByNumberInput = z.infer<
+  typeof getAccountByNumberSchema
+>["params"];

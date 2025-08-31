@@ -1,7 +1,11 @@
-import { Request, Response, NextFunction } from "express";
-import { AccountModel, CreateAccountResponse } from "./account.model";
-import { CreateAccountInput } from "./account.validate";
+import { Request } from "express";
+import { CreateAccountResponse } from "./account.model";
+import {
+  CreateAccountInput,
+  GetAccountByNumberInput,
+} from "./account.validate";
 import { prisma } from "../../lib/prisma";
+import { AppError } from "../../middlewares/errorHandler";
 
 class AccountService {
   async createAccount(
@@ -24,6 +28,32 @@ class AccountService {
     const account = await prisma.account.create({
       data: accountData,
     });
+
+    return {
+      accountId: account.id,
+      userId: account.userId,
+      accountNumber: account.accountNumber,
+      accountType: account.accountType,
+      balance: Number(account.balance),
+      isPrimary: account.isPrimary,
+    };
+  }
+
+  async getAccountDetailsByNumber(
+    data: GetAccountByNumberInput,
+    user: Request["user"]
+  ): Promise<CreateAccountResponse> {
+    const account = await prisma.account.findUnique({
+      where: { accountNumber: data.accountNumber },
+    });
+
+    if (!account) {
+      throw new AppError("Account not found", 404);
+    }
+
+    if (account.userId !== user?.id && user?.role !== "ADMIN") {
+      throw new AppError("Forbidden", 403);
+    }
 
     return {
       accountId: account.id,

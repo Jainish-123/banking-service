@@ -75,9 +75,6 @@ describe("AuthService", () => {
       (prisma.user.findUnique as jest.Mock).mockResolvedValue(mockUser);
       (bcrypt.compare as jest.Mock).mockImplementation(
         async (password, hash) => {
-          console.log(
-            `bcrypt.compare called with password=${password}, hash=${hash}`
-          );
           return true;
         }
       );

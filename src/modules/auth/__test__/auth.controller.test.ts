@@ -18,6 +18,10 @@ describe("AuthController", () => {
     next = jest.fn();
   });
 
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
   const mockUser = {
     id: 1,
     name: "jainish patel",

@@ -1,32 +1,17 @@
 import { prisma } from "../../lib/prisma";
-import { UserDTO, UserModel } from "./user.model";
+import { UserResponse } from "./user.model";
 import bcrypt from "bcryptjs";
 import { User } from "@prisma/client";
+import { GetUserByIdInput } from "./user.validate";
+import { AppError } from "../../middlewares/errorHandler";
 
 class UserService {
-  async createUser(data: {
-    name: string;
-    email: string;
-    password: string;
-  }): Promise<UserDTO> {
-    const hashedPassword = await bcrypt.hash(data.password, 10);
-    const user = await prisma.user.create({
-      data: {
-        name: data.name,
-        email: data.email,
-        password: hashedPassword,
-      },
-    });
-
-    return {
-      id: user.id,
-      name: user.name,
-      email: user.email,
-    };
-  }
-
-  async getAllUsers(): Promise<UserDTO[]> {
+  async getAllUsers(): Promise<UserResponse[]> {
     const users = await prisma.user.findMany();
+
+    if (!users || users.length == 0) {
+      throw new AppError("Users not found", 404);
+    }
 
     return users.map((user: User) => ({
       id: user.id,
@@ -35,9 +20,12 @@ class UserService {
     }));
   }
 
-  async getUserById(id: number): Promise<UserDTO | null> {
-    const user = await prisma.user.findUnique({ where: { id } });
-    if (!user) return null;
+  async getUserById(data: GetUserByIdInput): Promise<UserResponse | null> {
+    const user = await prisma.user.findUnique({ where: { id: data.id } });
+
+    if (!user) {
+      throw new AppError("User not found", 404);
+    }
 
     return {
       id: user.id,

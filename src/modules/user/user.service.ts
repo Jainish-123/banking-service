@@ -20,7 +20,7 @@ class UserService {
     }));
   }
 
-  async getUserById(data: GetUserByIdInput): Promise<UserResponse | null> {
+  async getUserById(data: GetUserByIdInput): Promise<UserResponse> {
     const user = await prisma.user.findUnique({ where: { id: data.id } });
 
     if (!user) {

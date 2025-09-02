@@ -1,6 +1,4 @@
 import { Request, Response, NextFunction } from "express";
-import accountController from "../transaction.controller";
-import accountService from "../transaction.service";
 import transactionService from "../transaction.service";
 import transactionController from "../transaction.controller";
 

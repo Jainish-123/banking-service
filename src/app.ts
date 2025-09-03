@@ -8,11 +8,13 @@ import transactionRoutes from "./modules/transaction/transaction.routes";
 const swaggerUi = require("swagger-ui-express");
 import swaggerSpec from "./config/swagger";
 import { errorHandler } from "./middlewares/errorHandler";
+import cookieParser from "cookie-parser";
 
 const app: Application = express();
 app.use(helmet());
 app.use(cors());
 app.use(express.json());
+app.use(cookieParser());
 
 app.use("/api/users", userRoutes);
 app.use("/api/auth", authRoutes);

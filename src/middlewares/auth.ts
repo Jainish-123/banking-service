@@ -23,12 +23,17 @@ export const requireAuth = (
   next: NextFunction
 ) => {
   const header = req.headers.authorization;
+  let token: string | null = null;
 
-  if (!header?.startsWith("Bearer ")) {
-    return next(new AppError("Unauthorized", 401));
+  if (header?.startsWith("Bearer ")) {
+    token = header.split(" ")[1];
+  } else if (req.cookies?.token) {
+    token = req.cookies.token;
   }
 
-  const token = header.split(" ")[1];
+  if (!token) {
+    return next(new AppError("Unauthorized", 401));
+  }
 
   try {
     const decoded = jwt.verify(token, env.JWT_SECRET);

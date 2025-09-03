@@ -2,6 +2,7 @@ import { Router } from "express";
 import authController from "./auth.controller";
 import { loginSchema, signUpSchema } from "./auth.validate";
 import { validate } from "../../middlewares/validate";
+import { requireAuth } from "../../middlewares/auth";
 
 /**
  * @swagger
@@ -56,6 +57,37 @@ router.post("/signup", validate(signUpSchema), authController.signUp);
  *         description: Internal server error
  */
 router.post("/login", validate(loginSchema), authController.login);
+
+/**
+ * @swagger
+ * /api/auth/me:
+ *   get:
+ *     summary: Get current logged in user
+ *     tags: [Auth]
+ *     security:
+ *      - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: User fetched successfully
+ *       401:
+ *         description:  Invalid credentials
+ *       500:
+ *         description: Internal server error
+ */
+
+router.get("/me", requireAuth, authController.getMe);
+
+/**
+ * @swagger
+ * /api/auth/logout:
+ *   post:
+ *     summary: Logout and clear cookie
+ *     tags: [Auth]
+ *     responses:
+ *       200:
+ *         description: Successfully logged out
+ */
+router.post("/logout", authController.logout);
 
 export default router;
 /**

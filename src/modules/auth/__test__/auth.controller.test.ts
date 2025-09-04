@@ -89,4 +89,53 @@ describe("AuthController", () => {
       expect(next).toHaveBeenCalledWith(error);
     });
   });
+
+  describe("getMe", () => {
+    it("should return 200 with user if authenticated", async () => {
+      req.user = mockUser;
+
+      await authController.getMe(req as Request, res as Response, next);
+
+      expect(res.status).toHaveBeenCalledWith(200);
+      expect(res.json).toHaveBeenCalledWith({
+        success: true,
+        user: mockUser,
+      });
+    });
+
+    it("should call next with error if user is not authenticated", async () => {
+      req.user = undefined;
+
+      await authController.getMe(req as Request, res as Response, next);
+
+      expect(next).toHaveBeenCalledWith(
+        expect.objectContaining({
+          message: "User not authenticated",
+          statusCode: 401,
+        })
+      );
+    });
+  });
+
+  describe("logout", () => {
+    it("should clear the cookie and return success message", async () => {
+      await authController.logout(req as Request, res as Response, next);
+
+      expect(res.clearCookie).toHaveBeenCalledWith("token", expect.anything());
+      expect(res.status).toHaveBeenCalledWith(200);
+      expect(res.json).toHaveBeenCalledWith({
+        message: "Logged out successfully",
+      });
+    });
+
+    it("should call next with error if something fails", async () => {
+      res.clearCookie = jest.fn(() => {
+        throw new Error("clear cookie failed");
+      });
+
+      await authController.logout(req as Request, res as Response, next);
+
+      expect(next).toHaveBeenCalledWith(expect.any(Error));
+    });
+  });
 });

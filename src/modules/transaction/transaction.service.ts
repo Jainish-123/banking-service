@@ -39,7 +39,7 @@ class TransactionService {
       }),
       prisma.transaction.create({
         data: {
-          type: TransactionType.WITHDRAW,
+          type: TransactionType.DEPOSIT,
           amount: depositAmmount,
           status: TransactionStatus.SUCCESS,
           description: data.description ?? undefined,

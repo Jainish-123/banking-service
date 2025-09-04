@@ -14,6 +14,8 @@ describe("AuthController", () => {
     res = {
       status: jest.fn().mockReturnThis(),
       json: jest.fn(),
+      cookie: jest.fn(),
+      clearCookie: jest.fn(),
     };
     next = jest.fn();
   });

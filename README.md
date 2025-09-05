@@ -1,5 +1,7 @@
 # Banking-Service
 
+![Docker CI](https://github.com/Jainish-123/banking-service/actions/workflows/ci.yml/badge.svg)
+
 Backend service for banking application in **Node.js**, **Express**, **MySQL** and **Prisma**.
 
 ---
@@ -21,6 +23,7 @@ Make sure you have the following installed on your system:
 - [npm](https://www.npmjs.com/) (comes with Node.js)
 - [MySQL](https://dev.mysql.com/downloads/mysql/) (>= 8.x)
 - [Git](https://git-scm.com/)
+- [Docker](https://www.docker.com/products/docker-desktop)
 
 Verify installations:
 
@@ -28,6 +31,7 @@ Verify installations:
 node -v
 npm -v
 mysql --version
+docker -v
 ```
 
 ---
@@ -122,6 +126,31 @@ npm test
 
 ```bash
 npm run test:coverage
+```
+
+---
+
+## Run with Docker (Recommended)
+
+You can run the application using Docker Compose without installing Node.js or MySQL locally.
+
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/Jainish-123/banking-service.git
+cd banking-service
+```
+
+### 2. Create .env file
+
+```bash
+cp .env.example .env
+```
+
+### 3. Start the application
+
+```bash
+docker compose up
 ```
 
 ---

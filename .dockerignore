@@ -1,0 +1,13 @@
+node_modules
+npm-debug.log
+Dockerfile*
+docker-compose.yml
+*.md
+*.git
+.git/
+.gitignore
+.env
+*.log
+*.test.js
+*.spec.js
+!prisma/

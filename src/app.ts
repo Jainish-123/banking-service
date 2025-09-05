@@ -1,0 +1,34 @@
+import express, { Application, Request, Response } from "express";
+import helmet from "helmet";
+import cors from "cors";
+import userRoutes from "./modules/user/user.routes";
+import authRoutes from "./modules/auth/auth.routes";
+import accountRoutes from "./modules/account/account.routes";
+import transactionRoutes from "./modules/transaction/transaction.routes";
+const swaggerUi = require("swagger-ui-express");
+import swaggerSpec from "./config/swagger";
+import { errorHandler } from "./middlewares/errorHandler";
+import cookieParser from "cookie-parser";
+
+const app: Application = express();
+app.use(helmet());
+app.use(cors());
+app.use(express.json());
+app.use(cookieParser());
+
+app.use("/api/users", userRoutes);
+app.use("/api/auth", authRoutes);
+app.use("/api/account", accountRoutes);
+app.use("/api/transaction", transactionRoutes);
+
+app.get("/health", (req: Request, res: Response) => {
+  res
+    .status(200)
+    .json({ status: "UP", message: "Banking service is running!!" });
+});
+
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
+app.use(errorHandler);
+
+export default app;

@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "removeComments": false,
+    "target": "ES2020",
+    "module": "commonjs",
+    "rootDir": ".",              
+    "outDir": "./dist",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "typeRoots": ["./src/types", "./node_modules/@types"]
+  },
+    "include": ["src/**/*", "prisma/**/*"],
+  "exclude": ["node_modules", "dist"]
+}

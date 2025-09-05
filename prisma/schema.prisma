@@ -1,0 +1,87 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role{
+  USER
+  ADMIN
+}
+
+enum AccountType {
+  SAVINGS
+  CHECKING
+  CREDIT
+  LOAN
+}
+
+enum AccountStatus {
+  ACTIVE
+  INACTIVE
+  CLOSED
+  FROZEN
+}
+
+enum TransactionType {
+  DEPOSIT
+  WITHDRAW
+}
+
+enum TransactionStatus {
+  PENDING
+  SUCCESS
+  FAILED
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String   @unique
+  password  String
+  role      Role     @default(USER)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  accounts  Account[]
+  transactions  Transaction[]
+}
+
+model Account {
+  id            Int           @id @default(autoincrement())
+  accountNumber String        @unique
+  balance       Decimal       @default(0.0)
+  accountType   AccountType   @default(SAVINGS)
+  status        AccountStatus @default(ACTIVE)
+  isPrimary     Boolean       @default(false)
+  closedAt      DateTime?
+  userId        Int
+  user          User          @relation(fields: [userId], references: [id])
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  
+  transactions  Transaction[]
+}
+
+model Transaction {
+  id            Int       @id @default(autoincrement())
+  type          TransactionType
+  amount        Decimal
+  status        TransactionStatus   @default(PENDING)
+  description   String?
+  balanceAfter  Decimal
+  accountId     Int
+  account       Account   @relation(fields: [accountId], references: [id])
+  userId        Int
+  user          User      @relation(fields: [userId], references: [id])
+  createdAt     DateTime  @default(now())
+}

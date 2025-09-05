@@ -9,7 +9,7 @@ const swaggerDefinition = {
   },
   servers: [
     {
-      url: "http://localhost:4000",
+      url: `http://localhost:${process.env.PORT || 4000}`,
       description: "Local server",
     },
   ],
@@ -31,7 +31,10 @@ const swaggerDefinition = {
 
 const options = {
   swaggerDefinition,
-  apis: ["./src/modules/**/*.ts"],
+  apis:
+    process.env.NODE_ENV === "demo"
+      ? ["./dist/src/modules/**/*.js"]
+      : ["./src/modules/**/*.ts"],
 };
 
 const swaggerSpec = swaggerJsdoc(options);

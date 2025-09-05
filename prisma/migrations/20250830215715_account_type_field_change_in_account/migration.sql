@@ -5,5 +5,5 @@
 
 */
 -- AlterTable
-ALTER TABLE `account` DROP COLUMN `AccountType`,
+ALTER TABLE `Account` DROP COLUMN `AccountType`,
     ADD COLUMN `accountType` ENUM('SAVINGS', 'CHECKING', 'CREDIT', 'LOAN') NOT NULL DEFAULT 'SAVINGS';

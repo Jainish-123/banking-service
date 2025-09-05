@@ -4,17 +4,19 @@
   "description": "RESTful banking microservice.",
   "main": "index.js",
   "scripts": {
-    "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
-    "build": "tsc -p tsconfig.json",
-    "start": "node dist/server.js",
-    "test": "jest --runInBand",
-    "test:coverage": "jest --coverage",
-    "lint": "eslint . --ext .ts",
-    "format": "prettier --check .",
-    "prisma:generate": "prisma generate",
-    "prisma:migrate": "prisma migrate dev",
-    "db:seed": "ts-node prisma/seed.ts"
-  },
+  "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
+  "build": "tsc -p tsconfig.json",
+  "start": "node dist/src/server.js",
+  "test": "jest --runInBand",
+  "test:coverage": "jest --coverage",
+  "lint": "eslint . --ext .ts",
+  "format": "prettier --check .",
+  "prisma:generate": "prisma generate",
+  "prisma:migrate": "prisma migrate dev",
+  "db:seed": "node dist/prisma/seed.js", 
+  "db:seed:dev": "ts-node prisma/seed.ts"
+}
+,
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Jainish-123/banking-service.git"

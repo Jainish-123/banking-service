@@ -5,6 +5,6 @@
 
 */
 -- AlterTable
-ALTER TABLE `transaction` ADD COLUMN `balanceAfter` DECIMAL(65, 30) NOT NULL,
+ALTER TABLE `Transaction` ADD COLUMN `balanceAfter` DECIMAL(65, 30) NOT NULL,
     ADD COLUMN `description` VARCHAR(191) NULL,
     ADD COLUMN `status` ENUM('PENDING', 'SUCCESS', 'FAILED') NOT NULL DEFAULT 'PENDING';
